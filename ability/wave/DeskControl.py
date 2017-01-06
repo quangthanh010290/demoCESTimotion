@@ -37,7 +37,7 @@ class DeskControl(object):
 
             socket_req = c.socket(zmq.REQ)
             socket_req.connect(url_socket)
-            socket_req.setsockopt(zmq.RCVTIMEO, 500)
+            socket_req.setsockopt(zmq.RCVTIMEO, 100)
 
             print "desk client control url socket: " + url_socket
             self._socket_req = socket_req
@@ -124,8 +124,8 @@ class DeskControl(object):
         byte_array.append(2)
 
         byte_array.append(3)
-        byte_array.append(4)
-        byte_array.append(5)
+        byte_array.append(3)
+        byte_array.append(2)
 
         byte_array.append(5)
 
@@ -149,5 +149,71 @@ class DeskControl(object):
             self._socket_req.recv()
         except Exception as ex:
             print(str(ex))
+            return -1
+        return 1
+
+    def stand_up_and_sit_down(self, address_desk_id):
+        byte_array = bytearray()
+        byte_array.append(255)
+        byte_array.append(255)
+
+        byte_array.append(2)
+
+        byte_array.append(3)
+        byte_array.append(3)
+        byte_array.append(2)
+
+        byte_array.append(address_desk_id)
+
+        byte_array.append(1)
+        byte_array.append(1)
+
+        checksum = self.get_checksum(byte_array)
+        byte_array.append(checksum)
+
+        byte_array.append(250)
+        byte_array.append(250)
+
+        print ("set_stand_up_or_sit_down -> sent bytes:")
+        print ''.join('{:02x}'.format(x) for x in byte_array)
+
+        try:
+            self._socket_req.send(byte_array)
+            self._socket_req.recv()
+        except Exception as ex:
+            print str(ex)
+            return -1
+        return 1
+
+    def hard_reset(self):
+        byte_array = bytearray()
+        byte_array.append(255)
+        byte_array.append(255)
+
+        byte_array.append(2)
+
+        byte_array.append(3)
+        byte_array.append(3)
+        byte_array.append(2)
+
+        byte_array.append(28)
+
+        byte_array.append(1)
+        byte_array.append(1)
+
+        checksum = self.get_checksum(byte_array)
+        byte_array.append(checksum)
+
+        byte_array.append(250)
+        byte_array.append(250)
+
+        print ("hard reset -> sent bytes:")
+        print ''.join('{:02x}'.format(x) for x in byte_array)
+
+        try:
+            self._socket_req.send(byte_array)
+            self._socket_req.recv()
+        except Exception as ex:
+            print str(ex)
             return -1
         return 1
