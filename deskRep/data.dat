@@ -1,5 +1,5 @@
-MinHeight:0
-MaxHeight:3350 
+MinHeight:380
+MaxHeight:1350 
 SitPos:740
 StandPos:810
 SerialDevice:/dev/ttyS0
